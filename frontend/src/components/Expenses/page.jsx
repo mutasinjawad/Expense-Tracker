@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { Plus, Trash, SquarePen } from 'lucide-react';
+import React, { useState, useEffect, use } from 'react'
+import { Plus, Trash, SquarePen, CookingPot, Car, ShoppingBag, Clapperboard, Cross, PlugZap, AlignJustify, BadgeInfo, ArrowDownNarrowWide } from 'lucide-react';
 
+import FilterExpenseForm from '../FilterExpenseForm/page';
 import AddExpenseForm from '../AddExpenseForm/page';
 import EditExpenseForm from '../EditExpenseForm/page';
 
 const Expenses = () => {
     const [expenses, setExpenses] = useState([]);
+    const [isFilterFormOpen, setIsFilterFormOpen] = useState(false);
     const [isAddFormOpen, setIsAddFormOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState([]);
+
+    const categoryBadge = {Food : CookingPot, Transport : Car, Shopping : ShoppingBag, Entertainment : Clapperboard, Healthcare : Cross, Utilities : PlugZap, Others : AlignJustify}
 
     const getExpenseStats = async () => {
         const data = await fetch('/api/expenses');
@@ -61,6 +65,10 @@ const Expenses = () => {
         }
     };
 
+    const handleFilterChange = (field, value) => {
+        // Implement filter logic here
+    }
+
     useEffect(() => {
         getExpenseStats();
     }, []);
@@ -87,37 +95,53 @@ const Expenses = () => {
                 </div>
 
                 {/* Functional Buttons */}
-                <div className='w-full h-fit flex items-center justify-end mb-6 gap-6'>
-                    {selectedExpense.length === 1 && (
-                        <button className='flex gap-2 bg-zinc-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-200 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsEditing(true)}>
-                            <SquarePen />
-                            Edit
+                <div className='w-full h-fit flex items-center justify-between mb-6 gap-6'>
+                    <div className='flex items-center justify-start'>
+                        {expenses.length > 0 && (
+                            <button className='flex gap-2 bg-lime-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsFilterFormOpen(true)}>
+                                <ArrowDownNarrowWide />
+                                Filter
+                            </button>
+                        )}
+                    </div>
+                    <div className='flex items-center justify-center gap-6'>
+                        {selectedExpense.length === 1 && (
+                            <button className='flex gap-2 bg-zinc-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-200 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsEditing(true)}>
+                                <SquarePen />
+                                Edit
+                            </button>
+                        )}
+                        {selectedExpense.length > 0 && (
+                            <button className='flex gap-2 bg-rose-400 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-rose-500 transition-all duration-200 hover:cursor-pointer' onClick={handleDeleteExpenses}>
+                                <Trash />
+                                Delete
+                            </button>
+                        )}
+                        <button className='flex gap-2 bg-lime-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsAddFormOpen(true)}>
+                            <Plus />
+                            Add Expense
                         </button>
-                    )}
-                    {selectedExpense.length > 0 && (
-                        <button className='flex gap-2 bg-rose-400 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-rose-500 transition-all duration-200 hover:cursor-pointer' onClick={handleDeleteExpenses}>
-                            <Trash />
-                            Delete
-                        </button>
-                    )}
-                    <button className='flex gap-2 bg-lime-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsAddFormOpen(true)}>
-                        <Plus />
-                        Add Expense
-                    </button>
+                    </div>
                 </div>
-                
+
                 {/* Expense List */}
                 <div className='w-full flex flex-1 flex-col items-start justify-start gap-6'>
                     <div className='w-full h-[clamp(35px,4vw,70px)] bg-black rounded-xl flex items-center justify-start gap-6 px-6'>
-                        <span className='text-zinc-200 w-[35%]'>Title</span>
+                        <span className='text-zinc-200 w-[3%]'><BadgeInfo /></span>
+                        <span className='text-zinc-200 w-[32%]'>Title</span>
                         <span className='text-zinc-200 w-[20%]'>Category</span>
                         <span className='text-zinc-200 w-[30%]'>Date</span>
                         <span className='text-zinc-200 w-[15%]'>Amount</span>
                     </div>
                     <div className='flex w-full flex-1 flex-col items-start justify-start overflow-y-auto'>
                         {expenses.map((expense, index) => 
-                            <div key={index} className={`mb-6 w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-6 text-zinc-700 gap-6 hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
-                                <div className='w-[35%]'>
+                            <div key={index} className={`mb-6 w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-6 text-zinc-600 gap-6 hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
+                                <div className='w-[3%]'>
+                                    {categoryBadge[expense.category] && 
+                                        React.createElement(categoryBadge[expense.category], { className: "w-5 h-5 text-zinc-600" })
+                                    }
+                                </div>
+                                <div className='w-[32%]'>
                                     <h1>{expense.title}</h1>
                                 </div>
                                 <div className='w-[20%]'>
@@ -153,6 +177,16 @@ const Expenses = () => {
                         <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} onEditExpense={(updatedExpense) => {
                             setExpenses(prev => prev.map(exp => exp._id === updatedExpense._id ? updatedExpense : exp));
                         }} />
+                    </div>
+                </>
+            )}
+
+            {/* Filter expense form */}
+            {isFilterFormOpen && (
+                <>
+                    <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsFilterFormOpen(false)}></div>
+                    <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
+                        <FilterExpenseForm />
                     </div>
                 </>
             )}
