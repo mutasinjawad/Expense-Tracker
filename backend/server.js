@@ -28,13 +28,13 @@ app.post("/expenses", async (req, res) => {
       return res.status(400).json({ error: "Amount must be a positive number" });
     }
 
-    const dateTime = date || new Date().toISOString().slice(0, 19).replace("T", " ");
-    const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(\.\d+)?(Z|[+-][01]\d:[0-5]\d)?$/;
-    if (!dateTimeRegex.test(dateTime)) {
+    const dateGiven = date || new Date().toISOString().split('T')[0];;
+    const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    if (!dateTimeRegex.test(dateGiven)) {
       return res.status(400).json({ error: "Invalid date format" });
     }
 
-    const doc = new Expense({ title, amount, category, date: dateTime });
+    const doc = new Expense({ title, amount, category, date: dateGiven });
     await doc.save();
     res.status(201).json(doc);
   } catch (err) {
@@ -67,7 +67,7 @@ app.patch("/expenses/:id", async (req, res) => {
     }
 
     if (date) {
-      const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(\.\d+)?(Z|[+-][01]\d:[0-5]\d)?$/;
+      const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
       if (!dateTimeRegex.test(date)) {
         return res.status(400).json({ error: "Invalid date format" });
       }

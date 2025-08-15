@@ -12,7 +12,7 @@ const Sidebar = ({ selectedTab }) => {
             <h1 className="text-2xl font-bold my-10">Expense Tracker</h1>
             <hr className="my-2 bg-zinc-500 border-zinc-300" />
             <div className='my-10 flex flex-col items-start'>
-                <span className='text-lg text-zinc-500'>Hello</span>
+                <span className='text-lg text-zinc-500'>Hello,</span>
                 <p className='text-2xl font-semibold text-zinc-700'>Jawad</p>
             </div>
             <hr className="my-2 bg-zinc-500 border-zinc-300" />
