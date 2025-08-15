@@ -17,15 +17,15 @@ const Sidebar = ({ selectedTab }) => {
             </div>
             <hr className="my-2 bg-zinc-500 border-zinc-300" />
             <nav className='my-10 flex flex-col gap-6'>
-                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'dashboard' ? 'font-bold text-zinc-700 bg-lime-100' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('dashboard')}>
+                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'dashboard' ? 'font-bold text-zinc-700 bg-lime-200' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('dashboard')}>
                     <LayoutDashboard />
                     <span>Dashboard</span>
                 </div>
-                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'expenses' ? 'font-bold text-zinc-700 bg-lime-100' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('expenses')}>
+                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'expenses' ? 'font-bold text-zinc-700 bg-lime-200' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('expenses')}>
                     <DollarSign />
                     <span>Expenses</span>
                 </div>
-                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'settings' ? 'font-bold text-zinc-700 bg-lime-100' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('settings')}>
+                <div className={`w-full h-[clamp(27px,2vw,37px)] rounded-lg flex gap-2 items-center justify-start px-2 hover:cursor-pointer transition-all duration-150 ${activeTab === 'settings' ? 'font-bold text-zinc-700 bg-lime-200' : 'text-zinc-500 bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleTabClick('settings')}>
                     <Settings2 />
                     <span>Settings</span>
                 </div>
