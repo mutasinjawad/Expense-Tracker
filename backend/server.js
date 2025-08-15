@@ -17,12 +17,23 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.post("/expenses", async (req, res) => {
   try {
-    const doc = new Expense({
-      title: req.body.title,
-      amount: req.body.amount,
-      category: req.body.category,
-      date: req.body.date
-    });
+    const { title, amount, category, date } = req.body;
+
+    if (!title || title.length < 3) {
+      return res.status(400).json({ error: "Title must be at least 3 characters long" });
+    }
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: "Amount must be a positive number" });
+    }
+
+    const dateTime = date || new Date().toISOString().slice(0, 19).replace("T", " ");
+    const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+    if (!dateTimeRegex.test(dateTime)) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    const doc = new Expense({ title, amount, category, date: dateTime });
     await doc.save();
     res.status(201).json(doc);
   } catch (err) {
@@ -30,7 +41,7 @@ app.post("/expenses", async (req, res) => {
   }
 });
 
-app.get("/all", async (req, res) => {
+app.get("/expenses", async (req, res) => {
   try {
     const docs = await Expense.find();
     res.json(docs);
