@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Trash } from 'lucide-react';
+import { Plus, Trash, SquarePen } from 'lucide-react';
+
 import AddExpenseForm from '../AddExpenseForm/page';
+import EditExpenseForm from '../EditExpenseForm/page';
 
 const Expenses = () => {
     const [expenses, setExpenses] = useState([]);
     const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState([]);
 
     const getExpenseStats = async () => {
         const data = await fetch('/api/expenses');
         const res = await data.json();
-        console.log(res);
         setExpenses(res);
     }
 
@@ -24,12 +26,14 @@ const Expenses = () => {
     }
 
     function formatReadableDateTime(isoString) {
-        const date = new Date(isoString);
+        const [year, month, day] = isoString.split('T')[0].split('-');
+        const date = new Date(Date.UTC(year, month - 1, day));
 
         return date.toLocaleString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
+            timeZone: 'UTC'
         });
     }
 
@@ -82,7 +86,14 @@ const Expenses = () => {
                     </div>
                 </div>
 
+                {/* Functional Buttons */}
                 <div className='w-full h-fit flex items-center justify-end mb-6 gap-6'>
+                    {selectedExpense.length === 1 && (
+                        <button className='flex gap-2 bg-zinc-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-200 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsEditing(true)}>
+                            <SquarePen />
+                            Edit
+                        </button>
+                    )}
                     {selectedExpense.length > 0 && (
                         <button className='flex gap-2 bg-rose-400 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-rose-500 transition-all duration-200 hover:cursor-pointer' onClick={handleDeleteExpenses}>
                             <Trash />
@@ -94,6 +105,7 @@ const Expenses = () => {
                         Add Expense
                     </button>
                 </div>
+                
                 {/* Expense List */}
                 <div className='w-full flex flex-1 flex-col items-start justify-start gap-6'>
                     <div className='w-full h-[clamp(35px,4vw,70px)] bg-black rounded-xl flex items-center justify-start gap-6 px-6'>
@@ -123,11 +135,24 @@ const Expenses = () => {
                 </div>
             </div>
 
+            {/* Add new expense form */}
             {isAddFormOpen && (
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsAddFormOpen(false)}></div>
                     <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
                         <AddExpenseForm setAddFormOpen={setIsAddFormOpen} onAddExpense={(newExpense) => setExpenses([newExpense, ...expenses])} />
+                    </div>
+                </>
+            )}
+
+            {/* Edit expense form */}
+            {isEditing && (
+                <>
+                    <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsEditing(false)}></div>
+                    <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
+                        <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} onEditExpense={(updatedExpense) => {
+                            setExpenses(prev => prev.map(exp => exp._id === updatedExpense._id ? updatedExpense : exp));
+                        }} />
                     </div>
                 </>
             )}

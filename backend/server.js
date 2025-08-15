@@ -57,6 +57,7 @@ app.patch("/expenses/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { title, amount, category, date } = req.body;
+    console.log("Received data:", req.body);
 
     if (title && title.length < 3) {
       return res.status(400).json({ error: "Title must be at least 3 characters long" });
@@ -67,8 +68,9 @@ app.patch("/expenses/:id", async (req, res) => {
     }
 
     if (date) {
+      const onlyDate = date.split('T')[0];
       const dateTimeRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-      if (!dateTimeRegex.test(date)) {
+      if (!dateTimeRegex.test(onlyDate)) {
         return res.status(400).json({ error: "Invalid date format" });
       }
     }

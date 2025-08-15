@@ -33,6 +33,41 @@ export async function POST(req) {
     }
 }
 
+export async function PATCH(req) {
+    try {
+        const body = await req.json();
+
+        if (!body.title || !body.amount || !body.category || !body.date) {
+            return Response.json({ success: false, message: 'All fields are required' }, { status: 400 });
+        }
+        if (body.title.length < 3) {
+            return Response.json({ success: false, message: 'Title must be at least 3 characters long' }, { status: 400 });
+        }
+        if (Number(body.amount) <= 0) {
+            return Response.json({ success: false, message: 'Amount must be a positive number' }, { status: 400 });
+        }
+        
+        console.log(body);
+        const res = await fetch(`${process.env.BACKEND_URL}/expenses/${body._id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 200) {
+            return Response.json({ success: true, data }, { status: res.status });
+        } else {
+            return Response.json({ success: false, message: data.error }, { status: res.status });
+        }
+
+    } catch (error) {
+        console.error('Error occurred while editing expense:', error);
+        return Response.json({ success: false, message: 'Failed to edit expense' }, { status: 500 });
+    }
+}
+
 export async function DELETE(req) {
     const body = await req.json();
     try {

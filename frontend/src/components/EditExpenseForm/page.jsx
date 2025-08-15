@@ -1,12 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
-    const [formData, setFormData] = useState({
-        title: '',
-        amount: '',
-        category: '',
-        date: new Date().toISOString().split('T')[0],
-    });
+const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
+    const [formData, setFormData] = useState(expense);
     const [isDropDownOpen, setIsDropDownOpen] = useState(false);
     const categories = ["Food", "Transport", "Shopping", "Entertainment", "Healthcare", "Utilities", "Others"];
 
@@ -30,7 +25,7 @@ const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
             return;
         }
         const response = await fetch('/api/expenses', {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -38,23 +33,25 @@ const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
         });
         const data = await response.json();
         if (data.success) {
-            alert('Expense added successfully');
-            onAddExpense(data.data || formData);
+            alert('Expense edited successfully');
+            onEditExpense(data.data || formData);
             setFormData({
                 title: '',
                 amount: '',
                 category: '',
                 date: new Date().toISOString().split('T')[0],
             });
-            setAddFormOpen(false);
+            setEditFormOpen(false);
         } else {
-            alert('Failed to add expense');
+            alert(`Failed to edit expense, Reason: ${data.message}`);
         }
-    };
+        onEditExpense(formData);
+        setEditFormOpen(false);
+    }
 
     return (
         <div className='w-full h-full bg-white rounded-xl flex flex-col items-start justify-start p-6'>
-            <h2 className='text-2xl font-black mb-4 text-zinc-800 uppercase'>Add Expense</h2>
+            <h2 className='text-2xl font-black mb-4 text-zinc-800 uppercase'>Edit Expense</h2>
             <form className='w-full flex flex-col gap-4' onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
                     <label htmlFor='title' className='text-sm font-medium text-zinc-700'>Title</label>
@@ -88,20 +85,21 @@ const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
                 <div className='flex w-full gap-6'>
                     <div className='flex flex-col w-full'>
                         <label htmlFor='date' className='text-sm font-medium text-zinc-700'>Date</label>
-                        <input type='date' id='date' className='border border-zinc-300 rounded-md p-2 text-sm font-medium text-gray-700 focus:outline-none' value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} max={new Date().toISOString().split('T')[0]} />
+                        <input type='date' id='date' className='border border-zinc-300 rounded-md p-2 text-sm font-medium text-gray-700 focus:outline-none' value={formData.date ? formData.date.split('T')[0] : ''} onChange={(e) => setFormData({ ...formData, date: e.target.value })} max={new Date().toISOString().split('T')[0]} />
                     </div>
                     <div className='flex flex-col w-full'>
                         <label htmlFor='amount' className='text-sm font-medium text-zinc-700'>Amount</label>
                         <input type='number' id='amount' className='border border-zinc-300 rounded-md p-2 text-sm font-medium text-gray-700 focus:outline-none' placeholder='Enter amount' value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                     </div>
                 </div>
+
                 <div className='flex gap-6'>
-                    <div className='w-full text-center bg-zinc-700 text-zinc-200 font-semibold py-2 px-4 rounded-lg hover:bg-zinc-900 transition-all duration-200 select-none' onClick={() => setAddFormOpen(false)}>Cancel</div>
-                    <button type='submit' className='w-full bg-lime-200 text-zinc-800 font-semibold py-2 px-4 rounded-lg hover:bg-lime-300 transition-all duration-200 disabled:bg-lime-100 disabled:text-gray-500 disabled:cursor-not-allowed' disabled={!formData.title || !formData.category || !formData.date || !formData.amount || Number(formData.amount) <= 0}>Add</button>
+                    <div className='w-full text-center bg-zinc-700 text-zinc-200 font-semibold py-2 px-4 rounded-lg hover:bg-zinc-900 transition-all duration-200 select-none' onClick={() => setEditFormOpen(false)}>Cancel</div>
+                    <button type='submit' className='w-full bg-lime-200 text-zinc-800 font-semibold py-2 px-4 rounded-lg hover:bg-lime-300 transition-all duration-200 disabled:bg-lime-100 disabled:text-gray-500 disabled:cursor-not-allowed' disabled={!formData.title || !formData.category || !formData.date || !formData.amount || Number(formData.amount) <= 0}>Save</button>
                 </div>
             </form>
         </div>
     )
 }
 
-export default AddExpenseForm
+export default EditExpenseForm
