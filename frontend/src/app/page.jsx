@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '@/components/sidebar/page.jsx'
 import Menubar from '@/components/Menubar/page';
+
+import Dashboard from '@/components/Dashboard/page';
 import Expenses from '@/components/Expenses/page.jsx'
 
 const page = () => {
   const [isMonitorScreen, setIsMonitorScreen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('expenses');
+  const [selectedTab, setSelectedTab] = useState('dashboard');
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,7 +35,7 @@ const page = () => {
         </div>
       )}
       <div className='h-full flex flex-1 items-center justify-center'>
-        {selectedTab === 'dashboard' && <div>Dashboard Content</div>}
+        {selectedTab === 'dashboard' && <Dashboard />}
         {selectedTab === 'expenses' && <Expenses />}
         {selectedTab === 'settings' && <div>Settings Content</div>}
       </div>
