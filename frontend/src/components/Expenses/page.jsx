@@ -6,6 +6,8 @@ import AddExpenseForm from '../AddExpenseForm/page';
 import EditExpenseForm from '../EditExpenseForm/page';
 
 const Expenses = () => {
+    const [isMobileScreen, setIsMobileScreen] = useState(false);
+
     const [expenses, setExpenses] = useState([]);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const visibleExpenses = filteredExpenses.length > 0 ? expenses.filter((e) => filteredExpenses.includes(e.category)) : expenses;
@@ -72,86 +74,119 @@ const Expenses = () => {
         getExpenseStats();
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+          setIsMobileScreen(window.innerWidth < 768);
+        };
+    
+        window.addEventListener('resize', handleResize);
+        handleResize();
+    
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <div className='relative w-full h-full'>
-            <div className='w-full h-full p-6 flex flex-col'>
-                <div className='w-full h-fit flex flex-col items-start mb-6'>
-                    <h1 className='text-4xl font-black mb-4 uppercase'>Expenses</h1>
-                    <div className='w-full h-fit flex items-center justify-start gap-6'>
-                        <div className='h-[200px] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
-                            <h2 className='text-zinc-500'>Total Expenses</h2>
-                            <p className='text-3xl font-bold text-zinc-800'>${calculateTotalExpenses()}</p>
+            <div className='w-full h-full p-[1.9vh] flex flex-col'>
+                <div className='w-full md:h-[20vh] h-[15vh] flex flex-col items-start md:mb-[1.9vh] mb-[1.2vh]'>
+                    <h1 className='md:text-[3vh] text-[2.5vh] font-black md:mb-[1.7vh] mb-[0.8vh] uppercase leading-none'>Expenses</h1>
+                    <div className='w-full md:h-[15vh] h-[11.7vh] flex items-center justify-start gap-[1.3vw]'>
+                        <div className='md:h-[15vh] h-[11.7vh] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
+                            <h2 className='md:text-base text-xs text-zinc-500 text-center'>Total</h2>
+                            <p className='md:text-3xl text-xl font-bold text-zinc-800'>${calculateTotalExpenses()}</p>
                         </div>
-                        <div className='h-[200px] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
-                            <h2 className='text-zinc-500'>Average Expenses</h2>
-                            <p className='text-3xl font-bold text-zinc-800'>${averageExpense()}</p>
+                        <div className='md:h-[15vh] h-[11.7vh] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
+                            <h2 className='md:text-base text-xs text-zinc-500 text-center'>Average</h2>
+                            <p className='md:text-3xl text-xl font-bold text-zinc-800'>${averageExpense()}</p>
                         </div>
-                        <div className='h-[200px] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
-                            <h2 className='text-zinc-500'>This Month</h2>
-                            <p className='text-3xl font-bold text-zinc-800'>${expenses.filter(expense => new Date(expense.date).getMonth() === new Date().getMonth()).reduce((acc, expense) => acc + expense.amount, 0)}</p>
+                        <div className='md:h-[15vh] h-[11.7vh] w-[33.33%] bg-zinc-200 rounded-xl flex flex-col items-center justify-center select-none hover:bg-lime-200 transition-all duration-200'>
+                            <h2 className='md:text-base text-xs text-zinc-500 text-center'>This Month</h2>
+                            <p className='md:text-3xl text-xl font-bold text-zinc-800'>${expenses.filter(expense => new Date(expense.date).getMonth() === new Date().getMonth()).reduce((acc, expense) => acc + expense.amount, 0)}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Functional Buttons */}
-                <div className='w-full h-fit flex items-center justify-between mb-6 gap-6'>
+                <div className='w-full h-[3.5vh] flex items-center justify-between md:mb-[1.9vh] mb-[1.2vh] gap-[1.3vw]'>
                     <div className='flex items-center justify-start'>
                         {expenses.length > 0 && (
-                            <button className={`flex gap-2 text-zinc-800 font-semibold py-2 px-3 rounded-lg transition-all duration-200 hover:cursor-pointer ${filteredExpenses.length > 0 ? 'bg-lime-200' : 'hover:bg-lime-300  bg-zinc-200'}`} onClick={() => setIsFilterFormOpen(true)}>
-                                <ArrowDownNarrowWide />
-                                Filter
-                                <span>{filteredExpenses.length > 0 ? `(${filteredExpenses.length})` : ''}</span>
+                            <button className={`flex gap-[0.5vw] text-zinc-800 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg transition-all duration-200 hover:cursor-pointer ${filteredExpenses.length > 0 ? 'bg-lime-200' : 'hover:bg-lime-300 bg-zinc-200'}`} onClick={() => setIsFilterFormOpen(true)}>
+                                <ArrowDownNarrowWide className='md:w-6 w-5 md:h-6 h-5'/>
+                                {!isMobileScreen && (
+                                    <>
+                                        Filter
+                                        <span>{filteredExpenses.length > 0 ? `(${filteredExpenses.length})` : ''}</span>
+                                    </>
+                                )}
                             </button>
                         )}
                     </div>
-                    <div className='flex items-center justify-center gap-6'>
+                    <div className='flex items-center justify-center md:gap-6 gap-4'>
                         {selectedExpense.length === 1 && (
-                            <button className='flex gap-2 bg-zinc-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-200 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsEditing(true)}>
-                                <SquarePen />
-                                Edit
+                            <button className='flex gap-[0.5vw] bg-zinc-200 text-zinc-800 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg hover:bg-lime-200 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsEditing(true)}>
+                                <SquarePen className='md:w-6 w-5 md:h-6 h-5' />
+                                {!isMobileScreen && (
+                                    <>
+                                        Edit
+                                    </>
+                                )}
                             </button>
                         )}
                         {selectedExpense.length > 0 && (
-                            <button className='flex gap-2 bg-rose-400 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-rose-500 transition-all duration-200 hover:cursor-pointer' onClick={handleDeleteExpenses}>
-                                <Trash />
-                                Delete
+                            <button className='flex gap-[0.5vw] bg-rose-400 text-zinc-800 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg hover:bg-rose-500 transition-all duration-200 hover:cursor-pointer' onClick={handleDeleteExpenses}>
+                                <Trash className='md:w-6 w-5 md:h-6 h-5' />
+                                {!isMobileScreen && (
+                                    <>
+                                        Delete
+                                    </>
+                                )}
                             </button>
                         )}
-                        <button className='flex gap-2 bg-lime-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsAddFormOpen(true)}>
-                            <Plus />
-                            Add Expense
+                        <button className='flex gap-[0.5vw] bg-lime-200 text-zinc-800 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsAddFormOpen(true)}>
+                            <Plus className='md:w-6 w-5 md:h-6 h-5' />
+                            {!isMobileScreen && (
+                                <>
+                                    Add Expense
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
 
                 {/* Expense List */}
-                <div className='w-full flex flex-1 flex-col items-start justify-start gap-6'>
-                    <div className='w-full h-[clamp(35px,4vw,70px)] bg-black rounded-xl flex items-center justify-start gap-6 px-6'>
-                        <span className='text-zinc-200 w-[3%]'><BadgeInfo /></span>
-                        <span className='text-zinc-200 w-[32%]'>Title</span>
-                        <span className='text-zinc-200 w-[20%]'>Category</span>
-                        <span className='text-zinc-200 w-[30%]'>Date</span>
-                        <span className='text-zinc-200 w-[15%]'>Amount</span>
+                <div className='w-full flex md:h-[73vh] h-[78vh] flex-col items-start justify-start gap-[1.9vh]'>
+                    <div className='w-full h-[clamp(35px,4vw,70px)] bg-black rounded-xl flex items-center justify-start gap-[1.3vw] px-[1.3vw] py-[1.9vh]'>
+                        <span className='text-zinc-200 md:w-[3%] w-[5%]'><BadgeInfo className='md:w-6 w-5 md:h-6 h-5' /></span>
+                        <span className='text-zinc-200 md:w-[32%] w-[48%] md:pl-0 pl-2 md:text-base text-xs'>Title</span>
+                        {!isMobileScreen && (
+                            <span className='text-zinc-200 w-[20%] md:text-base text-xs'>Category</span>
+                        )}
+                        <span className='text-zinc-200 md:w-[30%] w-[32%] md:text-base text-xs'>Date</span>
+                        <span className='text-zinc-200 w-[15%] md:text-base text-xs'>Amount</span>
                     </div>
-                    <div className='flex w-full flex-1 flex-col items-start justify-start overflow-y-auto'>
+                    <div className='flex w-full md:h-[63vh] h-[68vh] flex-col items-start justify-start overflow-y-auto'>
                         {visibleExpenses.map((expense, index) => 
-                            <div key={index} className={`mb-6 w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-6 text-zinc-600 gap-6 hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
-                                <div className='w-[3%]'>
+                            <div key={index} className={`mb-[1.8vh] w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-[1.3vw] py-[1.9vh] text-zinc-600 gap-[1.3vw] hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
+                                <div className='md:w-[3%] w-[5%]'>
                                     {categoryBadge[expense.category] && 
                                         React.createElement(categoryBadge[expense.category], { className: "w-5 h-5 text-zinc-600" })
                                     }
                                 </div>
-                                <div className='w-[32%]'>
-                                    <h1>{expense.title}</h1>
+                                <div className='md:w-[32%] w-[50%]'>
+                                    <h1 className='line-clamp-1 md:pl-0 pl-2 md:text-base text-sm'>{expense.title}</h1>
                                 </div>
-                                <div className='w-[20%]'>
-                                <p>{expense.category}</p>
-                                </div>
-                                <div className='w-[30%]'>
-                                    <p>{formatReadableDateTime(expense.date)}</p>
+                                {!isMobileScreen && (
+                                    <div className='w-[20%]'>
+                                        <p>{expense.category}</p>
+                                    </div>
+                                )}
+                                <div className='md:w-[30%] w-[32%]'>
+                                    <p className='line-clamp-1 md:text-base text-sm'>{formatReadableDateTime(expense.date)}</p>
                                 </div>
                                 <div className='w-[15%]'>
-                                    <p>${expense.amount}</p>
+                                    <p className='md:text-base text-sm'>${expense.amount}</p>
                                 </div>
                             </div>
                         )}
@@ -163,7 +198,7 @@ const Expenses = () => {
             {isAddFormOpen && (
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsAddFormOpen(false)}></div>
-                    <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
+                    <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
                         <AddExpenseForm setAddFormOpen={setIsAddFormOpen} onAddExpense={(newExpense) => setExpenses([newExpense, ...expenses])} />
                     </div>
                 </>
@@ -173,7 +208,7 @@ const Expenses = () => {
             {isEditing && (
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsEditing(false)}></div>
-                    <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
+                    <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
                         <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} onEditExpense={(updatedExpense) => {
                             setExpenses(prev => prev.map(exp => exp._id === updatedExpense._id ? updatedExpense : exp));
                         }} />
@@ -185,7 +220,7 @@ const Expenses = () => {
             {isFilterFormOpen && (
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsFilterFormOpen(false)}></div>
-                    <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
+                    <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
                         <FilterExpenseForm expense={filteredExpenses} onFilterChange={(category) => {setFilteredExpenses((prev) => prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category])}} />
                     </div>
                 </>

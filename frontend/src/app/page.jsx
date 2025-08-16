@@ -1,15 +1,37 @@
 'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '@/components/sidebar/page.jsx'
+import Menubar from '@/components/Menubar/page';
 import Expenses from '@/components/Expenses/page.jsx'
 
 const page = () => {
-  const [selectedTab, setSelectedTab] = useState('dashboard');
+  const [isMonitorScreen, setIsMonitorScreen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('expenses');
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMonitorScreen(window.innerWidth > 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <div className='flex max-w-screen h-screen overflow-hidden bg-gray-50'>
-      <Sidebar selectedTab={setSelectedTab} />
+    <div className='relative flex max-w-screen h-screen overflow-hidden bg-gray-50'>
+      {isMonitorScreen && (
+        <Sidebar selectedTab={setSelectedTab} />
+      )}
+      {!isMonitorScreen && (
+        <div className='absolute top-0 right-0 w-full h-full'>
+          <Menubar selectedTab={setSelectedTab} />
+        </div>
+      )}
       <div className='h-full flex flex-1 items-center justify-center'>
         {selectedTab === 'dashboard' && <div>Dashboard Content</div>}
         {selectedTab === 'expenses' && <Expenses />}

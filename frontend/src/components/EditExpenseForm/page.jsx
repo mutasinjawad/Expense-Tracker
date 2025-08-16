@@ -50,8 +50,8 @@ const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
     }
 
     return (
-        <div className='w-full h-full bg-white rounded-xl flex flex-col items-start justify-start p-6'>
-            <h2 className='text-2xl font-black mb-4 text-zinc-800 uppercase'>Edit Expense</h2>
+        <div className='w-full h-full bg-white rounded-xl flex flex-col items-start justify-start p-[1.9vh]'>
+            <h2 className='md:text-[3vh] text-[2.5vh] font-black mb-4 text-zinc-800 uppercase'>Edit Expense</h2>
             <form className='w-full flex flex-col gap-4' onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
                     <label htmlFor='title' className='text-sm font-medium text-zinc-700'>Title</label>
@@ -82,12 +82,12 @@ const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
                     </div>
                 </div>
 
-                <div className='flex w-full gap-6'>
-                    <div className='flex flex-col w-full'>
+                <div className='flex md:flex-row flex-col w-full gap-6'>
+                    <div className='flex flex-col md:w-[50%] w-full'>
                         <label htmlFor='date' className='text-sm font-medium text-zinc-700'>Date</label>
                         <input type='date' id='date' className='border border-zinc-300 rounded-md p-2 text-sm font-medium text-gray-700 focus:outline-none' value={formData.date ? formData.date.split('T')[0] : ''} onChange={(e) => setFormData({ ...formData, date: e.target.value })} max={new Date().toISOString().split('T')[0]} />
                     </div>
-                    <div className='flex flex-col w-full'>
+                    <div className='flex flex-col md:w-[50%] w-full'>
                         <label htmlFor='amount' className='text-sm font-medium text-zinc-700'>Amount</label>
                         <input type='number' id='amount' className='border border-zinc-300 rounded-md p-2 text-sm font-medium text-gray-700 focus:outline-none' placeholder='Enter amount' value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                     </div>

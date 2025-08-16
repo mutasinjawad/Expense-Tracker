@@ -15,18 +15,18 @@ const FilterExpenseForm = ({ expense, onFilterChange }) => {
     }
     
     return (
-        <div className='w-full h-full bg-white rounded-xl flex flex-col items-start justify-start p-6'>
-            <h2 className='text-2xl font-black mb-4 text-zinc-800 uppercase'>Filter By Category</h2>
-            <div className='flex flex-col items-start justify-start w-full gap-4'>
-                <span className='text-zinc-600 text-lg'>Select the categories you want to see:</span>
-                <div className='mb-2 flex flex-col gap-6 w-full'>
+        <div className='w-full h-full bg-white rounded-xl flex flex-col items-start justify-start p-[1.9vh]'>
+            <h2 className='md:text-[3vh] text-[2.5vh] font-black mb-4 text-zinc-800 uppercase'>Filter By Category</h2>
+            <div className='flex flex-col items-start justify-start w-full gap-[1.7vh]'>
+                <span className='text-zinc-600 md:text-lg text-base'>Select the categories you want to see:</span>
+                <div className='mb-2 flex flex-col gap-[1.9vh] w-full'>
                     {Object.entries(categoryBadge).map(([category, Icon]) => {
                         const isSelected = expense.includes(String(category));
                         return (
                             <div key={category} className={`flex items-center justify-between w-full px-3 py-2 rounded-lg select-none transition-all duration-200 ${isSelected ? 'bg-lime-200' : 'bg-zinc-100 hover:bg-lime-50'}`} onClick={() => handleFilterChange(category)}>
                                 <div className='flex items-center justify-start gap-6'>
-                                    <Icon className='text-zinc-600 w-5 h-5' />
-                                    <span className='text-zinc-600'>{category}</span>
+                                    <Icon className='text-zinc-600 md:w-5 md:h-5 w-4 h-4' />
+                                    <span className='text-zinc-600 md:text-base text-sm'>{category}</span>
                                 </div>
                                 <div className={`w-5 h-5 rounded-full bg-white border-1 flex items-center justify-center cursor-pointer transition-all duration-200 text-lime-600 ${isSelected ? 'border-lime-400 ' : 'border-zinc-400'}`}>
                                     {isSelected ? <Check className='w-3 h-3' /> : null}
