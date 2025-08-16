@@ -7,6 +7,9 @@ import EditExpenseForm from '../EditExpenseForm/page';
 
 const Expenses = () => {
     const [expenses, setExpenses] = useState([]);
+    const [filteredExpenses, setFilteredExpenses] = useState([]);
+    const visibleExpenses = filteredExpenses.length > 0 ? expenses.filter((e) => filteredExpenses.includes(e.category)) : expenses;
+
     const [isFilterFormOpen, setIsFilterFormOpen] = useState(false);
     const [isAddFormOpen, setIsAddFormOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -65,10 +68,6 @@ const Expenses = () => {
         }
     };
 
-    const handleFilterChange = (field, value) => {
-        // Implement filter logic here
-    }
-
     useEffect(() => {
         getExpenseStats();
     }, []);
@@ -98,9 +97,10 @@ const Expenses = () => {
                 <div className='w-full h-fit flex items-center justify-between mb-6 gap-6'>
                     <div className='flex items-center justify-start'>
                         {expenses.length > 0 && (
-                            <button className='flex gap-2 bg-lime-200 text-zinc-800 font-semibold py-2 px-3 rounded-lg hover:bg-lime-300 transition-all duration-200 hover:cursor-pointer' onClick={() => setIsFilterFormOpen(true)}>
+                            <button className={`flex gap-2 text-zinc-800 font-semibold py-2 px-3 rounded-lg transition-all duration-200 hover:cursor-pointer ${filteredExpenses.length > 0 ? 'bg-lime-200' : 'hover:bg-lime-300  bg-zinc-200'}`} onClick={() => setIsFilterFormOpen(true)}>
                                 <ArrowDownNarrowWide />
                                 Filter
+                                <span>{filteredExpenses.length > 0 ? `(${filteredExpenses.length})` : ''}</span>
                             </button>
                         )}
                     </div>
@@ -134,7 +134,7 @@ const Expenses = () => {
                         <span className='text-zinc-200 w-[15%]'>Amount</span>
                     </div>
                     <div className='flex w-full flex-1 flex-col items-start justify-start overflow-y-auto'>
-                        {expenses.map((expense, index) => 
+                        {visibleExpenses.map((expense, index) => 
                             <div key={index} className={`mb-6 w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-6 text-zinc-600 gap-6 hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
                                 <div className='w-[3%]'>
                                     {categoryBadge[expense.category] && 
@@ -186,7 +186,7 @@ const Expenses = () => {
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsFilterFormOpen(false)}></div>
                     <div className='absolute top-1/2 left-1/2 w-[30vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
-                        <FilterExpenseForm />
+                        <FilterExpenseForm expense={filteredExpenses} onFilterChange={(category) => {setFilteredExpenses((prev) => prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category])}} />
                     </div>
                 </>
             )}
