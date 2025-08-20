@@ -40,7 +40,7 @@ export default function ExpenseAreaChart({ expenses }) {
   }
 
   return (
-    <div className="h-80 w-full rounded-xl border-[1px] border-zinc-300">
+    <div className="lg:h-[35vh] h-full w-full rounded-xl border-[1px] border-zinc-300">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />

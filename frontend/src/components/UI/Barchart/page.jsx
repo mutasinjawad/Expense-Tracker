@@ -51,7 +51,7 @@ export default function ExpenseBarChart({ expenses }) {
   }
 
   return (
-    <div className="h-80 w-full rounded-xl border-[1px] border-zinc-300">
+    <div className="lg:h-[35vh] h-[30vh] w-full rounded-xl border-[1px] border-zinc-300">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />

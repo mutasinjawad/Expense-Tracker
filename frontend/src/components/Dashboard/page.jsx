@@ -20,14 +20,14 @@ const Dashboard = () => {
 
     return (
         <div className='w-full h-full flex flex-col'>
-            <div className='w-full md:h-[26vh] h-[15vh] p-[1.9vh]'>
+            <div className='w-full md:h-[25vh] h-[15vh] p-[1.9vh] md:mb-0 mb-[1.9vh]'>
                 <Overview expenses={expenses} text="Dashboard" />
             </div>
-            <div className='w-full lg:h-full h-[50%] flex lg:flex-row flex-col gap-6 items-center justify-center px-[1.9vh] lg:mb-0 mb-[1.9vh]'>
+            <div className='w-full lg:h-[35vh] h-[60vh] flex lg:flex-row flex-col gap-[1.9vh] items-center justify-center px-[1.9vh] mb-[1.9vh]'>
                 <Chart expenses={expenses} />
                 <BarChart expenses={expenses} />
             </div>
-            <div className='w-full h-full px-[1.9vh]'>
+            <div className='w-full lg:h-[40vh] h-[20vh] px-[1.9vh] pb-[1.9vh]'>
                 <Linechart expenses={expenses} />
             </div>
         </div>

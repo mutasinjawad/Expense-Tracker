@@ -71,15 +71,15 @@ export default function ExpenseChart({ expenses }) {
   }
 
   return (
-    <div className="h-80 w-full rounded-xl border-[1px] border-zinc-300">
+    <div className="lg:h-[35vh] h-[30vh] w-full rounded-xl border-[1px] border-zinc-300">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius={50}
-            outerRadius={100}
+            innerRadius={30}
+            outerRadius={80}
             paddingAngle={2}
             dataKey="value"
           >

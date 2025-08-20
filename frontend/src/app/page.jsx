@@ -6,6 +6,7 @@ import Menubar from '@/components/Menubar/page';
 
 import Dashboard from '@/components/Dashboard/page';
 import Expenses from '@/components/Expenses/page.jsx'
+import Settings from '@/components/Settings/page.jsx';
 
 const page = () => {
   const [isMonitorScreen, setIsMonitorScreen] = useState(false);
@@ -37,7 +38,7 @@ const page = () => {
       <div className='h-full flex flex-1 items-center justify-center'>
         {selectedTab === 'dashboard' && <Dashboard />}
         {selectedTab === 'expenses' && <Expenses />}
-        {selectedTab === 'settings' && <div>Settings Content</div>}
+        {selectedTab === 'settings' && <Settings />}
       </div>
     </div>
   )
