@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { SquarePen, LogOut } from 'lucide-react';
 
+import EditProfileForm from '../Forms/EditProfileForm/page.jsx';
+
 const Settings = () => {
     const user={firstName: "Muhtasin", lastName: "Jawad", email: "jawad@example.com", gender: 'Male', city: "Dhaka"}
     
@@ -60,8 +62,8 @@ const Settings = () => {
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsEditing(false)}></div>
                     <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
-                        <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} onEditExpense={(updatedExpense) => {
-                            setExpenses(prev => prev.map(exp => exp._id === updatedExpense._id ? updatedExpense : exp));
+                        <EditProfileForm user={user} setEditFormOpen={setIsEditing} onEditUser={(updatedUser) => {
+                            setUser(updatedUser);
                         }} />
                     </div>
                 </>

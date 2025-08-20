@@ -17,3 +17,9 @@ body {
   color: var(--foreground);
   font-family: Inter, sans-serif;
 }
+
+@layer utilities {
+  .heading-font {
+    font-family: 'Great Vibes', cursive;
+  }
+}

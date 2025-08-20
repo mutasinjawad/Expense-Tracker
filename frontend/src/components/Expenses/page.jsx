@@ -3,9 +3,9 @@ import { Plus, Trash, SquarePen, CookingPot, Car, ShoppingBag, Clapperboard, Cro
 
 import Overview from '../UI/Overview/page';
 
-import FilterExpenseForm from '../FilterExpenseForm/page';
-import AddExpenseForm from '../AddExpenseForm/page';
-import EditExpenseForm from '../EditExpenseForm/page';
+import FilterExpenseForm from '../Forms/FilterExpenseForm/page';
+import AddExpenseForm from '../Forms/AddExpenseForm/page';
+import EditExpenseForm from '../Forms/EditExpenseForm/page';
 
 const Expenses = () => {
     const [isMobileScreen, setIsMobileScreen] = useState(false);
