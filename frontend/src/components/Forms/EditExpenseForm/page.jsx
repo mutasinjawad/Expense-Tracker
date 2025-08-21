@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
+const EditExpenseForm = ({ expense, setEditFormOpen }) => {
     const [formData, setFormData] = useState(expense);
     const [isDropDownOpen, setIsDropDownOpen] = useState(false);
     const categories = ["Food", "Transport", "Shopping", "Entertainment", "Healthcare", "Utilities", "Others"];
@@ -34,7 +34,6 @@ const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
         const data = await response.json();
         if (data.success) {
             alert('Expense edited successfully');
-            onEditExpense(data.data || formData);
             setFormData({
                 title: '',
                 amount: '',
@@ -45,7 +44,6 @@ const EditExpenseForm = ({ expense, setEditFormOpen, onEditExpense }) => {
         } else {
             alert(`Failed to edit expense, Reason: ${data.message}`);
         }
-        onEditExpense(formData);
         setEditFormOpen(false);
     }
 

@@ -35,6 +35,64 @@ const SignInUp = () => {
         }
     }
 
+    const handleSignIn = async (e) => {
+        e.preventDefault();
+        if (!isSignInOpen) return;
+        
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        if (!email || !password) return;
+
+        const res = await fetch('/api/sign-in', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert(data.message);
+            e.target.reset();
+            window.location.href = '/';
+        } else {
+            alert(data.message);
+        }
+    }
+
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+        if (isSignInOpen) return;
+
+        const firstName = e.target.firstname.value;
+        const lastName = e.target.lastname.value;
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        if (!firstName || !email || !password) {
+            alert('All fields are required');
+            return;
+        }
+        const userData = { firstName, lastName, email, password };
+
+        const response = await fetch('/api/sign-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+            handleClick();
+            e.target.reset();
+        } else {
+            alert(data.message);
+        }
+    }
+
     useEffect(() => {
         const handleResize = () => {
             setIsTabletScreen(window.innerWidth <= 1024);
@@ -53,20 +111,21 @@ const SignInUp = () => {
             {!isTabletScreen ? (
                 <div className='relative overflow-hidden'>
                     <div ref={containerRef} className='h-screen w-[150vw] flex items-center justify-center translate-x-[0] transition-all duration-500'>
+                        {/* Sign In */}
                         <div className='h-full w-[50vw] flex items-center justify-center bg-lime-100'>
                             <div className={`px-4 py-3 w-[80%] h-fit flex flex-col items-center justify-center gap-6 transition-all duration-300 ${isSignInOpen ? "opacity-100" : "opacity-0"}`}>
-                                <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-4'>
+                                <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-4' onSubmit={handleSignIn}>
                                     <div className='flex flex-col w-full h-fit'>
                                         <label htmlFor="email" className='font-medium text-zinc-700 mb-2 select-none'>Email</label>
-                                        <input type="email" id="email" placeholder='Enter your email' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                        <input type="email" id="email" name="email" placeholder='Enter your email' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                     </div>
 
                                     <div className='flex flex-col w-full h-fit select-none'>
                                         <label htmlFor="password" className='font-medium text-zinc-700 mb-2'>Password</label>
-                                        <input type="password" id="password" placeholder='Enter your password' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                        <input type="password" id="password" name="password" placeholder='Enter your password' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                     </div>
 
-                                    <button className='bg-lime-500 text-white py-2 px-4 rounded-lg mt-6 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign In</button>
+                                    <button type="submit" className='bg-lime-500 text-white py-2 px-4 rounded-lg mt-6 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign In</button>
                                 </form>
 
                                 <div className='select-none'>
@@ -87,31 +146,32 @@ const SignInUp = () => {
                             </div>
                         </div>
 
+                        {/* Sign Up */}
                         <div className='h-full w-[50vw] flex items-center justify-center bg-lime-100'>
                             <div className={`px-4 py-3 w-[80%] h-fit flex flex-col items-center justify-center gap-6 transition-all duration-300 ${isSignInOpen ? "opacity-0" : "opacity-100"}`}>
-                                <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-4'>
+                                <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-4' onSubmit={handleSignUp}>
                                     <div className='flex w-full h-fit gap-4'>
                                         <div className='flex flex-col w-[50%] h-fit'>
-                                            <label htmlFor="name" className='font-medium text-zinc-700 mb-2 select-none'>First Name <span className='text-red-500'>*</span></label>
-                                            <input type="text" id="name" placeholder='Enter your first name' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                            <label htmlFor="firstname" className='font-medium text-zinc-700 mb-2 select-none'>First Name <span className='text-red-500'>*</span></label>
+                                            <input type="text" id="firstname" name="firstname" placeholder='Enter your first name' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                         </div>
                                         <div className='flex flex-col w-[50%] h-fit'>
-                                            <label htmlFor="name" className='font-medium text-zinc-700 mb-2 select-none'>Last Name</label>
-                                            <input type="text" id="name" placeholder='Enter your last name' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                            <label htmlFor="lastname" className='font-medium text-zinc-700 mb-2 select-none'>Last Name</label>
+                                            <input type="text" id="lastname" name="lastname" placeholder='Enter your last name' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                         </div>
                                     </div>
 
                                     <div className='flex flex-col w-full h-fit'>
                                         <label htmlFor="email" className='font-medium text-zinc-700 mb-2 select-none'>Email <span className='text-red-500'>*</span></label>
-                                        <input type="email" id="email" placeholder='Enter your email' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                        <input type="email" id="email" name="email" placeholder='Enter your email' required className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                     </div>
 
                                     <div className='flex flex-col w-full h-fit select-none'>
                                         <label htmlFor="password" className='font-medium text-zinc-700 mb-2'>Password <span className='text-red-500'>*</span></label>
-                                        <input type="password" id="password" placeholder='Enter your password' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                        <input type="password" id="password" name="password" placeholder='Enter your password' required className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                     </div>
 
-                                    <button className='bg-lime-500 text-white py-2 px-4 rounded-lg mt-6 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign Up</button>
+                                    <button type="submit" className='bg-lime-500 text-white py-2 px-4 rounded-lg mt-6 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign Up</button>
                                 </form>
 
                                 <div className='select-none'>
@@ -139,21 +199,22 @@ const SignInUp = () => {
                             </div>
                         </div>
 
+                        {/* Sign In */}
                         <div ref={containerRef} className='w-[200vw] h-[75vh] flex items-start justify-start bg-lime-100 translate-x-0 transition-all duration-600'>
                             <div className='h-full w-[100vw] shrink-0 flex items-center justify-center'>
                                 <div className={`px-8 py-3 w-full h-fit flex flex-col items-center justify-center gap-4 transition-all duration-300 ${isSignInOpen ? "opacity-100" : "opacity-0"}`}>
-                                    <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-2'>
+                                    <form className='w-full h-fit flex flex-col items-start justify-center gap-2' onSubmit={handleSignIn}>
                                         <div className='flex flex-col text-sm w-full h-fit'>
                                             <label htmlFor="email" className='font-medium text-zinc-700 mb-1 select-none'>Email</label>
-                                            <input type="email" id="email" placeholder='Enter your email' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                            <input type="email" id="email" name="email" placeholder='Enter your email' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                         </div>
 
                                         <div className='flex flex-col text-sm w-full h-fit select-none'>
                                             <label htmlFor="password" className='font-medium text-zinc-700 mb-1'>Password</label>
-                                            <input type="password" id="password" placeholder='Enter your password' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
+                                            <input type="password" id="password" name="password" placeholder='Enter your password' className='bg-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600' />
                                         </div>
 
-                                        <button className='bg-lime-500 text-sm text-white py-2 px-4 rounded-lg mt-5 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign In</button>
+                                        <button type="submit" className='bg-lime-500 text-sm text-white py-2 px-4 rounded-lg mt-5 w-full select-none hover:bg-lime-800 transition-all duration-300 hover:cursor-pointer'>Sign In</button>
                                     </form>
 
                                     <div className='select-none text-sm'>
@@ -162,6 +223,7 @@ const SignInUp = () => {
                                 </div>
                             </div>
 
+                            {/* Sign Up */}
                             <div className='h-full w-[100vw] shrink-0 flex items-center justify-center'>
                                 <div className={`px-8 py-3 w-full h-fit flex flex-col items-center justify-center gap-4 transition-all duration-300 ${isSignInOpen ? "opacity-0" : "opacity-100"}`}>
                                     <form action="" className='w-full h-fit flex flex-col items-start justify-center gap-2'>

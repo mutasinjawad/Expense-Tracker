@@ -1,16 +1,41 @@
-import React, { useState } from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import { SquarePen, LogOut } from 'lucide-react';
 
 import EditProfileForm from '../Forms/EditProfileForm/page.jsx';
 
 const Settings = () => {
-    const user={firstName: "Muhtasin", lastName: "Jawad", email: "jawad@example.com", gender: 'Male', city: "Dhaka"}
+    const [user, setUser] = useState(null);
     
     const [isEditing, setIsEditing] = useState(false);
+    
+    const getUser = async () => {
+        const res =  await fetch('/api/user', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success) {
+            setUser(data.data.user);
+            console.log(data.data.user);
+        } else {
+            alert('Failed to fetch user');
+        }
+        return data;
+    };
 
-    function handleLogout() {
+    const handleLogout = () => {
         // Logic for logging out the user
         console.log("User logged out");
+    }
+
+    useEffect(() => {
+        getUser()
+    }, []);
+
+    if (!user) {
+        return <div>Loading user...</div>;
     }
 
     return (
@@ -28,7 +53,7 @@ const Settings = () => {
                         </div>
 
                         <div className='flex items-center justify-center'>
-                            <button className='flex lg:gap-[0.5vw] gap-[2vw] bg-black text-zinc-200 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg hover:bg-red-500 transition-all duration-200 hover:cursor-pointer' onClick={handleLogout()}>
+                            <button className='flex lg:gap-[0.5vw] gap-[2vw] bg-black text-zinc-200 font-semibold py-[0.7vh] md:px-[0.7vw] px-[1.5vw] rounded-lg hover:bg-red-500 transition-all duration-200 hover:cursor-pointer' onClick={handleLogout}>
                                 <LogOut />
                                 Logout
                             </button>

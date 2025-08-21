@@ -1,19 +1,40 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { LayoutDashboard, DollarSign, Settings2 } from 'lucide-react';
 
 const Sidebar = ({ selectedTab }) => {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [user, setUser] = useState(null);
+    
     const handleTabClick = (tab) => {
         selectedTab(tab);
         setActiveTab(tab);
     };
+
+    const getUser = async () => {
+        const res =  await fetch('/api/user', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success) {
+            setUser(data.data.user);
+        } else {
+            alert('Failed to fetch user');
+        }
+        return data;
+    };
+
+    useEffect(() => {
+        getUser()
+    }, []);
+
     return (
         <div className='bg-white h-full w-[15vw] overflow-hidden shadow-xl px-6'>
             <h1 className="text-2xl font-bold my-10">Expense Tracker</h1>
             <hr className="my-2 bg-zinc-500 border-zinc-300" />
             <div className='my-10 flex flex-col items-start'>
                 <span className='text-lg text-zinc-500'>Hello,</span>
-                <p className='text-2xl font-semibold text-zinc-700'>Jawad</p>
+                <p className='text-2xl font-semibold text-zinc-700'>{user?.firstName || 'User'}</p>
             </div>
             <hr className="my-2 bg-zinc-500 border-zinc-300" />
             <nav className='my-10 flex flex-col gap-6'>

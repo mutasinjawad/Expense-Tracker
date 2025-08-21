@@ -7,10 +7,9 @@ import FilterExpenseForm from '../Forms/FilterExpenseForm/page';
 import AddExpenseForm from '../Forms/AddExpenseForm/page';
 import EditExpenseForm from '../Forms/EditExpenseForm/page';
 
-const Expenses = () => {
+const Expenses = ({ expenses, onUpdate }) => {
     const [isMobileScreen, setIsMobileScreen] = useState(false);
 
-    const [expenses, setExpenses] = useState([]);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const visibleExpenses = filteredExpenses.length > 0 ? expenses.filter((e) => filteredExpenses.includes(e.category)) : expenses;
 
@@ -20,21 +19,6 @@ const Expenses = () => {
     const [selectedExpense, setSelectedExpense] = useState([]);
 
     const categoryBadge = {Food : CookingPot, Transport : Car, Shopping : ShoppingBag, Entertainment : Clapperboard, Healthcare : Cross, Utilities : PlugZap, Others : AlignJustify}
-
-    const getExpenseStats = async () => {
-        const data = await fetch('/api/expenses');
-        const res = await data.json();
-        setExpenses(res);
-    }
-
-    function calculateTotalExpenses() {
-        return expenses.reduce((acc, expense) => acc + expense.amount, 0);
-    }
-
-    function averageExpense() {
-        const total = calculateTotalExpenses();
-        return (total / expenses.length || 0).toFixed(2);
-    }
 
     function formatReadableDateTime(isoString) {
         const [year, month, day] = isoString.split('T')[0].split('-');
@@ -63,18 +47,19 @@ const Expenses = () => {
         });
 
         const data = await response.json();
+        console.log(data);
         if (data.success) {
             alert('Expenses deleted successfully');
-            setExpenses(prev => prev.filter(expense => !selectedExpense.some(e => e._id === expense._id)));
             setSelectedExpense([]);
+            onUpdate();
         } else {
             alert('Failed to delete expenses');
         }
     };
 
     useEffect(() => {
-        getExpenseStats();
-    }, []);
+        onUpdate();
+    }, [isAddFormOpen, isEditing]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -155,7 +140,7 @@ const Expenses = () => {
                         <span className='text-zinc-200 w-[15%] md:text-base text-xs'>Amount</span>
                     </div>
                     <div className='flex w-full md:h-[63vh] h-[68vh] flex-col items-start justify-start overflow-y-auto'>
-                        {visibleExpenses.map((expense, index) => 
+                        {visibleExpenses.length > 0 ? visibleExpenses.map((expense, index) => 
                             <div key={index} className={`mb-[1.8vh] w-full h-[clamp(35px,4vw,70px)] flex items-center justify-start rounded-lg px-[1.3vw] py-[1.9vh] text-zinc-600 gap-[1.3vw] hover:cursor-pointer transition-all duration-150 ${selectedExpense.some(e => e._id === expense._id) ? 'bg-lime-100' : 'hover:bg-lime-50 bg-white'}`} onClick={() => {setSelectedExpense(prev => {if (prev.some(e => e._id === expense._id)) { return prev.filter(e => e._id !== expense._id); } return [...prev, expense]; })}}>
                                 <div className='md:w-[3%] w-[5%]'>
                                     {categoryBadge[expense.category] && 
@@ -177,6 +162,10 @@ const Expenses = () => {
                                     <p className='md:text-base text-sm'>${expense.amount}</p>
                                 </div>
                             </div>
+                        ) : (
+                            <div className='w-full h-full flex items-center justify-center'>
+                                <p className='text-zinc-400'>No expenses found</p>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -187,7 +176,7 @@ const Expenses = () => {
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsAddFormOpen(false)}></div>
                     <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
-                        <AddExpenseForm setAddFormOpen={setIsAddFormOpen} onAddExpense={(newExpense) => setExpenses([newExpense, ...expenses])} />
+                        <AddExpenseForm setAddFormOpen={setIsAddFormOpen} />
                     </div>
                 </>
             )}
@@ -197,9 +186,7 @@ const Expenses = () => {
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsEditing(false)}></div>
                     <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
-                        <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} onEditExpense={(updatedExpense) => {
-                            setExpenses(prev => prev.map(exp => exp._id === updatedExpense._id ? updatedExpense : exp));
-                        }} />
+                        <EditExpenseForm expense={selectedExpense[0]} setEditFormOpen={setIsEditing} />
                     </div>
                 </>
             )}

@@ -5,18 +5,18 @@ import Chart from '@/components/UI/Chart/page.jsx'
 import BarChart from '@/components/UI/Barchart/page.jsx'
 import Linechart from '@/components/UI/Linechart/page.jsx'
 
-const Dashboard = () => {
-    const [expenses, setExpenses] = useState([]);
+const Dashboard = ({ expenses }) => {
+    // const expenses = useState(expenses || []);
 
-    const getExpenseStats = async () => {
-        const data = await fetch('/api/expenses');
-        const res = await data.json();
-        setExpenses(res);
-    }
+    // const getExpenseStats = async () => {
+    //     const data = await fetch('/api/expenses');
+    //     const res = await data.json();
+    //     setExpenses(res);
+    // }
 
-    useEffect(() => {
-        getExpenseStats();
-    }, []);
+    // useEffect(() => {
+    //     getExpenseStats();
+    // }, []);
 
     return (
         <div className='w-full h-full flex flex-col'>

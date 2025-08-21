@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
+const AddExpenseForm = ({ setAddFormOpen }) => {
     const [formData, setFormData] = useState({
         title: '',
         amount: '',
@@ -39,7 +39,6 @@ const AddExpenseForm = ({ setAddFormOpen, onAddExpense }) => {
         const data = await response.json();
         if (data.success) {
             alert('Expense added successfully');
-            onAddExpense(data.data || formData);
             setFormData({
                 title: '',
                 amount: '',

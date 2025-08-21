@@ -1,13 +1,35 @@
-export async function GET() {
-    const res = await fetch(`${process.env.BACKEND_URL}/expenses`);
+import { parse } from "cookie";
+
+async function getToken(req) {
+    const cookies = req.headers.get('cookie');
+    const parsed = parse(cookies);
+    return parsed.token;
+}
+
+export async function GET(req) {
+    const token = await getToken(req);
+    if (!token) {
+        return Response.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const res = await fetch(`${process.env.BACKEND_URL}/expenses`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        cache: 'no-store'
+    });
     const data = await res.json();
     return Response.json(data);
 }
 
 export async function POST(req) {
     try {
-        const body = await req.json();
+        const token = await getToken(req);
+        if (!token) {
+            return Response.json({ message: "Unauthorized" }, { status: 401 });
+        }
 
+        const body = await req.json();
         if (!body.title || !body.amount || !body.category || !body.date) {
             return Response.json({ success: false, message: 'All fields are required' }, { status: 400 });
         }
@@ -20,23 +42,30 @@ export async function POST(req) {
 
         const res = await fetch(`${process.env.BACKEND_URL}/expenses`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body),
         });
 
         const data = await res.json();
-        return Response.json({ success: true, data }, { status: res.status });
+        if (res.status === 201) {
+            return Response.json({ success: true, data }, { status: res.status });
+        } else {
+            return Response.json({ success: false, message: data.error }, { status: res.status });
+        }
 
     } catch (error) {
-        console.error('Error occurred while adding expense:', error);
         return Response.json({ success: false, message: 'Failed to add expense' }, { status: 500 });
     }
 }
 
 export async function PATCH(req) {
     try {
-        const body = await req.json();
+        const token = await getToken(req);
+        if (!token) {
+            return Response.json({ message: "Unauthorized" }, { status: 401 });
+        }
 
+        const body = await req.json();
         if (!body.title || !body.amount || !body.category || !body.date) {
             return Response.json({ success: false, message: 'All fields are required' }, { status: 400 });
         }
@@ -47,10 +76,9 @@ export async function PATCH(req) {
             return Response.json({ success: false, message: 'Amount must be a positive number' }, { status: 400 });
         }
         
-        console.log(body);
         const res = await fetch(`${process.env.BACKEND_URL}/expenses/${body._id}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(body),
         });
 
@@ -63,21 +91,26 @@ export async function PATCH(req) {
         }
 
     } catch (error) {
-        console.error('Error occurred while editing expense:', error);
         return Response.json({ success: false, message: 'Failed to edit expense' }, { status: 500 });
     }
 }
 
 export async function DELETE(req) {
-    const body = await req.json();
     try {
+        const token = await getToken(req);
+        if (!token) {
+            return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+        }
+
+        const body = await req.json();
         const res = await fetch(`${process.env.BACKEND_URL}/expenses`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         });
         const expenses = await res.json();
         const expenseIds = expenses.map(expense => expense._id);
         const missingIds = body.ids.filter(id => !expenseIds.includes(id));
+        console.log("Ids:", body)
 
         if (missingIds.length > 0) {
             return Response.json({ success: false, message: `These IDs do not exist: ${missingIds.join(', ')}` }, { status: 400 });
@@ -87,16 +120,14 @@ export async function DELETE(req) {
             body.ids.forEach(async (id) => {
                 await fetch(`${process.env.BACKEND_URL}/expenses/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 });
             });
             return Response.json({ success: true, message: 'Expenses deleted successfully' }, { status: 200 });
         } catch (error) {
-            console.error(error);
             return Response.json({ success: false, message: 'Server error' }, { status: 500 });
         }
     } catch (error) {
-        console.error(error);
         return Response.json({ success: false, message: 'Server error' }, { status: 500 });
     }
 }
