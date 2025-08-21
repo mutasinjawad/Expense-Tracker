@@ -1,15 +1,20 @@
 import React from 'react'
+import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
 const Hero = () => {
   return (
     <div className='w-full h-full flex flex-col items-center justify-between gap-6'>
         <div className='w-full flex items-center justify-between'>
-            <h1 className='uppercase lg:text-4xl text-2xl font-bold text-zinc-800'>Expenta</h1>
-            <button className='bg-zinc-800 text-white hover:text-zinc-800 lg:text-base text-sm lg:px-4 px-3 lg:py-2 py-1 rounded-full flex items-center gap-2 border-2 hover:cursor-pointer border-zinc-800 group hover:bg-transparent transition-colors duration-200'>
-                Get Started
-                <ChevronRight className='lg:w-5 w-4 lg:h-5 h-4 group-hover:translate-x-2 transition-transform duration-200' />
-            </button>
+            <div className='min-w-[120px] w-[10vw] h-fit'>
+                <img src="/img/logo2.png" alt="Logo" className='w-full h-full object-contain' />
+            </div>
+            <Link href="/sign-in-up">
+              <button className='bg-zinc-800 text-white hover:text-zinc-800 lg:text-base text-sm lg:px-4 px-3 lg:py-2 py-1 rounded-full flex items-center gap-2 border-2 hover:cursor-pointer border-zinc-800 group hover:bg-transparent transition-colors duration-200'>
+                  Get Started
+                  <ChevronRight className='lg:w-5 w-4 lg:h-5 h-4 group-hover:translate-x-2 transition-transform duration-200' />
+              </button>
+            </Link>
         </div>
         <div className='relative w-full flex flex-1 lg:items-center items-start lg:justify-center justify-start'>
             <div className='w-full h-full flex flex-col items-start lg:justify-center justify-start lg:mt-0 mt-[5vh] gap-[8vh]'>
