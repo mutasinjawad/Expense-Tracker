@@ -53,7 +53,6 @@ const SignInUp = () => {
 
         const data = await res.json();
         if (data.success) {
-            alert(data.message);
             e.target.reset();
             window.location.href = '/';
         } else {

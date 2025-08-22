@@ -113,7 +113,9 @@ app.delete("/expenses/:id", auth, async (req, res) => {
   }
 });
 
-// User registration
+// ------------------------------------------------------ USER ------------------------------------------------------
+
+// --------------------------- User registration ---------------------------
 app.post("/users", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -147,19 +149,7 @@ app.post("/users", async (req, res) => {
   }
 });
 
-app.get("/user", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).select("firstName lastName email -_id");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json({ status: 200, user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// User login
+// --------------------------- User login ---------------------------
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -179,7 +169,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// User authentication
+// --------------------------- User authentication ---------------------------
 app.get("/auth", async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -196,6 +186,37 @@ app.get("/auth", async (req, res) => {
   } catch (err) {
     console.error("JWT verification failed:", err.message);
     return res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
+// --------------------------- User profile details ---------------------------
+app.get("/user", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("firstName lastName email gender city -_id");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ status: 200, user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// --------------------------- User profile details update ---------------------------
+app.patch("/user", auth, async (req, res) => {
+  try {
+    const { firstName, lastName, gender, city } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { firstName, lastName, gender, city },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ status: 200, user: updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

@@ -18,21 +18,29 @@ const Settings = () => {
         const data = await res.json();
         if (data.success) {
             setUser(data.data.user);
-            console.log(data.data.user);
         } else {
             alert('Failed to fetch user');
         }
         return data;
     };
 
-    const handleLogout = () => {
-        // Logic for logging out the user
-        console.log("User logged out");
+    const handleLogout = async () => {
+        const res = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(data.message);
+            window.location.href = "/sign-in-up"; 
+        } else {
+            alert('Failed to log out');
+        }
     }
 
     useEffect(() => {
         getUser()
-    }, []);
+    }, [isEditing]);
 
     if (!user) {
         return <div>Loading user...</div>;
@@ -87,9 +95,7 @@ const Settings = () => {
                 <>
                     <div className='absolute top-0 left-0 w-full h-full bg-black opacity-60 flex items-center justify-center' onClick={() => setIsEditing(false)}></div>
                     <div className='absolute top-1/2 left-1/2 lg:w-[40vw] md:w-[60vw] w-[70vw] h-fit transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center'>
-                        <EditProfileForm user={user} setEditFormOpen={setIsEditing} onEditUser={(updatedUser) => {
-                            setUser(updatedUser);
-                        }} />
+                        <EditProfileForm user={user} setEditFormOpen={setIsEditing} />
                     </div>
                 </>
             )}

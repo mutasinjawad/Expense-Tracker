@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true, minlength: 6 },
+  gender: { type: String, enum: ["male", "female", "other"] },
+  city: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now }
 });
 
